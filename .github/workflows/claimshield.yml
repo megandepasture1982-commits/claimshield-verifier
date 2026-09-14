@@ -19,6 +19,7 @@ jobs:
     env:
       NLTK_DATA: /home/runner/nltk_data
     timeout-minutes: 25
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,30 +34,28 @@ jobs:
           path: |
             ~/.cache/huggingface
             .cache/huggingface
-          key: claimshield-models-v1-${{ runner.os }}
+          key: claimshield-models-v2-${{ runner.os }}
           restore-keys: |
+            claimshield-models-v2-
             claimshield-models-v1-
 
-- name: Install verifier dependencies
-  run: |
-    pip install -r requirements.txt
-    mkdir -p "$HOME/nltk_data"
-    python -m nltk.downloader -d "$HOME/nltk_data" punkt punkt_tab
-    python - <<'PY'
-    import nltk
-    print("NLTK search paths:", nltk.data.path)
-    print("punkt:", nltk.data.find("tokenizers/punkt"))
-    print("punkt_tab:", nltk.data.find("tokenizers/punkt_tab"))
-    PY
+      - name: Install verifier dependencies
+        run: |
+          pip install -r requirements.txt
+          mkdir -p "$HOME/nltk_data"
+          python -m nltk.downloader -d "$HOME/nltk_data" punkt punkt_tab
+          python - <<'PY'
+          import nltk
+          print("NLTK search paths:", nltk.data.path)
+          print("punkt:", nltk.data.find("tokenizers/punkt"))
+          print("punkt_tab:", nltk.data.find("tokenizers/punkt_tab"))
+          PY
 
       - name: Request GitHub OIDC token
         id: oidc
         shell: bash
         run: |
-          TOKEN=$(curl -fsSL \
-            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=claimshield-supabase" \
-            | python -c "import json,sys; print(json.load(sys.stdin)['value'])")
+          TOKEN=$(curl -fsSL             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=claimshield-supabase"             | python -c "import json,sys; print(json.load(sys.stdin)['value'])")
           echo "::add-mask::$TOKEN"
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
