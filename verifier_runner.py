@@ -13,9 +13,9 @@ HHEM_MODEL = "vectara/hallucination_evaluation_model"
 MINICHECK_MODEL = "roberta-large"
 
 MAX_EVIDENCE_ITEMS = 6
-MAX_CHUNKS = 8
-CHUNK_CHARS = 1400
-CHUNK_OVERLAP = 180
+MAX_CHUNKS = 12
+CHUNK_CHARS = 900
+CHUNK_OVERLAP = 120
 
 
 def post(path, payload):
