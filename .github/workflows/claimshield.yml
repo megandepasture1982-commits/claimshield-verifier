@@ -59,8 +59,12 @@ jobs:
           echo "::add-mask::$TOKEN"
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
-      - name: Verify next ClaimShield claim
+      - name: Verify ClaimShield claim batch
         env:
           GITHUB_OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
           HF_HOME: .cache/huggingface
-        run: python verifier_runner.py
+        run: |
+          for claim_number in 1 2 3 4 5; do
+            echo "Processing batch item ${claim_number} of 5"
+            python verifier_runner.py
+          done
